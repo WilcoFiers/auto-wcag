@@ -39,30 +39,39 @@ These elements can be found using the following CSS selector:
 *[role=checkbox], *[role=combobox], *[role=listbox], *[role=searchbox], *[role=slider], *[role=switch], *[role=textbox], input:not([type=hidden]):not([type=button]):not([type=submit]):not([type=reset]):not([type=image]):not([role]), textarea:not([role]), select:note([role])
 ```
 
-
-
-
 ### Step 1
 Test method: [automatic][earl:automatic]
 
-Check if at least one of the elements referenced by the valid `aria-describedby` attribute values exists.
+Find the closest ancestor of the selected form field, that is either a fieldset, form element, has the role of radiogroup (in case the selected element is a radiobutton), or the root of the document. This element is the *context element*.
 
-if yes, continue with [step 2](#step-2)
+Compute the *accessible name* of the seleected form field, using the [name computation algorithm](name-compute)
 
-else, return
+Take each element from the *context element*, that matches the selector of this rule, excluding the currently selected element. Put these in a list of *other form fields*.
 
-| Outcome  | Failed
+For each element in the *other form fields* list, compute the accesslbie name and compare it to that of the selected element. Put each element with the same accessible name in a list *same name fields*.
+
+Check if the *same name fields* list has any elements in it.
+
+If yes, continue with [step 2](#step-2)
+
+If no, return:
+
+| Outcome  | Passed
 |----------|-----
-| ID       | SC1-1-1-aria-describedby-fail1
-| Error    | None of the elements referenced by aria-describedby exists.
+| ID       | SC2-4-6-form-labels-unique
 
 
 ### Step 2
-Test method: [manual][earl:manual]
 
-...
+... compare descriptions
 
+## Open questions
+
+- Is this always true in the case of radiobuttons and select elements?
+- Should the 'type' of input be considered? Example: allow mobile phone to be used for a checkbox and a text field in the same form?
+- Does this rule correctly interpret things like phone number fields broken up into two input fields?
 
 [earl:automatic]: pages/test-modes.md#automatic
 [earl:semiauto]: pages/test-modes.md#automatic
 [earl:manual]:  pages/test-modes.md#manual
+[name-compute]: ...
